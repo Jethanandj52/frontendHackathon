@@ -1,23 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { FiSearch, FiBell, FiShoppingCart, FiUser } from 'react-icons/fi';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import {
+  FiBell,
+  FiUser,
+  FiMenu,
+  FiX,
+  FiMessageSquare,
+} from "react-icons/fi";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { ModeToggle } from "./mode-toggle";
+import UserPopup from "./UserPopup";
 
 const Nav = () => {
   const [showPopup, setShowPopup] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [showMessages, setShowMessages] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch currently logged-in user
+  // ✅ Fetch user
   const fetchUser = async () => {
     try {
-      const res = await axios.get('http://localhost:7000/auth/users');
-      // You might want to adjust logic if multiple users come
-      const activeUser = res.data.users.find(u => u.isActive === true);
+      const res = await axios.get("http://localhost:7000/auth/users");
+      const activeUser = res.data.users.find((u) => u.isActive === true);
       setUser(activeUser);
     } catch (error) {
-      console.error('Error fetching user:', error.message);
+      console.error("Error fetching user:", error.message);
     }
   };
 
@@ -25,72 +35,130 @@ const Nav = () => {
     fetchUser();
   }, []);
 
+  // ✅ Logout
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:7000/auth/logout', {
+      await axios.post("http://localhost:7000/auth/logout", {
         email: user?.email,
       });
-      toast.success('Logged out successfully');
-      navigate('/');
+      toast.success("Logout successful", { autoClose: 1000 });
+      navigate("/");
     } catch (err) {
-      toast.error('Logout failed');
+      toast.error("Logout failed");
     }
   };
 
   return (
-    <div className="relative">
-      <div className="flex justify-between items-center px-10 py-5 bg-white text-black shadow-md">
-        {/* Logo */}
-         <div className="flex items-center gap-2">
-  <img
-    src="https://static.vecteezy.com/system/resources/previews/050/524/094/non_2x/home-furniture-logo-design-free-png.png"
-    alt="Logo"
-    className="w-10 h-10 "
-  />
-  <span className="text-2xl font-bold text-blue-600">FurniVerse</span>
-</div>
-
-        {/* Navigation Links */}
-        <div className="flex gap-8 text-lg font-medium">
-          <a href="#" className="hover:text-blue-500">Home</a>
-          <a href="#" className="hover:text-blue-500">Shop</a>
-          <a href="#" className="hover:text-blue-500">Browse</a>
-          <a href="#" className="hover:text-blue-500">Contact</a>
+    <nav className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md dark:bg-gray-900/80 shadow-md z-50 border-b border-green-100 dark:border-gray-800 transition-colors">
+      <div className="flex justify-between items-center px-5 md:px-10 py-3">
+        {/* ✅ Logo */}
+        <div className="flex items-center gap-2">
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2966/2966482.png"
+            alt="Logo"
+            className="w-10 h-10 md:w-12 md:h-12 object-contain"
+          />
+          <span className="text-2xl font-extrabold text-green-700 dark:text-green-400">
+            HealthMate 💚
+          </span>
         </div>
 
-        {/* Action Icons */}
-        <div className="flex items-center gap-6 text-xl relative">
-          <FiSearch className="cursor-pointer hover:text-blue-500" />
-          <FiBell className="cursor-pointer hover:text-blue-500" />
-          <FiShoppingCart className="cursor-pointer hover:text-blue-500" />
+        {/* ✅ Desktop Links */}
+        <div className="hidden md:flex gap-10 text-[16px] font-semibold">
+          <Link to="/home" className="hover:text-green-600 transition-colors">
+            Home
+          </Link>
+          
+          <Link to="/doctors" className="hover:text-green-600 transition-colors">
+            Doctors
+          </Link>
+
+          {/* 🧩 NEW: Family Members Tab */}
+          <Link to="/family" className="hover:text-green-600 transition-colors">
+            Family
+          </Link>
+
+          <Link to="/about" className="hover:text-green-600 transition-colors">
+            About
+          </Link>
+          <Link to="/contact" className="hover:text-green-600 transition-colors">
+            Contact
+          </Link>
+        </div>
+
+        {/* ✅ Right Icons */}
+        <div className="flex items-center gap-4 text-xl relative">
+          <FiMessageSquare
+            className="cursor-pointer hover:text-green-600 transition-transform hover:scale-110"
+            onClick={() => {
+              setShowMessages(!showMessages);
+              setShowNotification(false);
+              setShowPopup(false);
+            }}
+          />
+          <FiBell
+            className="cursor-pointer hover:text-green-600 transition-transform hover:scale-110"
+            onClick={() => {
+              setShowNotification(!showNotification);
+              setShowMessages(false);
+              setShowPopup(false);
+            }}
+          />
+          <ModeToggle />
           <FiUser
-            className="cursor-pointer hover:text-blue-500"
-            onClick={() => setShowPopup(!showPopup)}
+            className="cursor-pointer hover:text-green-600 transition-transform hover:scale-110"
+            onClick={() => {
+              setShowPopup(!showPopup);
+              setShowNotification(false);
+              setShowMessages(false);
+            }}
           />
 
-          {/* User Info Popup */}
-          {showPopup && user && (
-            <div className="absolute right-0 top-14 bg-white border rounded shadow-md w-64 p-4 z-50">
-              <div className="flex flex-col items-center text-center">
-                <img
-                  src={user.url || 'https://via.placeholder.com/100'}
-                  alt="User"
-                  className="w-16 h-16 rounded-full object-cover mb-2"
-                />
-                <p className="font-semibold text-lg">{user.firstName} {user.lastName}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-1 rounded"
-              >
-                Logout
-              </button>
-            </div>
-          )}
+          {/* ✅ Mobile Menu Toggle */}
+          <button
+            className="md:hidden text-2xl focus:outline-none transition-transform hover:scale-110"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? <FiX /> : <FiMenu />}
+          </button>
         </div>
       </div>
-    </div>
+
+      {/* ✅ Mobile Menu */}
+      <div
+        className={`md:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-800 overflow-hidden transition-all duration-300 ${
+          menuOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="flex flex-col items-center py-4 space-y-3 text-lg font-medium">
+          <Link to="/dashboard" className="hover:text-green-600" onClick={() => setMenuOpen(false)}>
+            Dashboard
+          </Link>
+          <Link to="/report" className="hover:text-green-600" onClick={() => setMenuOpen(false)}>
+            Reports
+          </Link>
+          <Link to="/doctors" className="hover:text-green-600" onClick={() => setMenuOpen(false)}>
+            Doctors
+          </Link>
+
+          {/* 🧩 NEW: Family Members Tab for Mobile */}
+          <Link to="/family" className="hover:text-green-600" onClick={() => setMenuOpen(false)}>
+            Family
+          </Link>
+
+          <Link to="/chat" className="hover:text-green-600" onClick={() => setMenuOpen(false)}>
+            AI Chat
+          </Link>
+        </div>
+      </div>
+
+      {/* ✅ Popups */}
+      {showPopup && (
+        <UserPopup user={user} onLogout={handleLogout} onClose={() => setShowPopup(false)} />
+      )}
+      {showNotification && <NotificationPopup onClose={() => setShowNotification(false)} />}
+      {showMessages && <MessagePopup onClose={() => setShowMessages(false)} />}
+    </nav>
   );
 };
 

@@ -3,6 +3,8 @@ import Nav from '../Nav'
 import Hero from './Hero'
 import ShowProduct from './showProduct'
 import Footer from './Footer'
+import About from './About'
+import Contact from './Contact'
  
  
  
@@ -10,10 +12,11 @@ import Footer from './Footer'
 const Home = () => {
   return (
     <>
-    <Nav/>
+  
     <Hero/>
-    <ShowProduct/>
-    <Footer/>
+   <About/>
+   <Contact/>
+   
     </>
   )
 }
