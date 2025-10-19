@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+ 
+
+      import React, { useEffect, useState } from 'react';
 import { FiSearch, FiBell, FiShoppingCart, FiUser } from 'react-icons/fi';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,Link} from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const Nav = () => {
@@ -41,7 +43,7 @@ const Nav = () => {
     <div className="relative">
       <div className="flex justify-between items-center px-10 py-5 bg-white text-black shadow-md">
         {/* Logo */}
-         <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
   <img
     src="https://static.vecteezy.com/system/resources/previews/050/524/094/non_2x/home-furniture-logo-design-free-png.png"
     alt="Logo"
@@ -52,11 +54,38 @@ const Nav = () => {
 
         {/* Navigation Links */}
         <div className="flex gap-8 text-lg font-medium">
-          <a href="#" className="hover:text-blue-500">Home</a>
-          <a href="#" className="hover:text-blue-500">Shop</a>
-          <a href="#" className="hover:text-blue-500">Browse</a>
-          <a href="#" className="hover:text-blue-500">Contact</a>
-        </div>
+       <Link
+                   to="/dashboard"
+                   className="hover:text-blue-500"
+                 >
+                  home
+                 </Link>
+        
+        <Link
+                   to="/dashboard/addProduct"
+                   className="hover:text-blue-500"
+                 >
+                  Add Product
+                 </Link>
+         <Link
+                   to="/dashboard/allProduct"
+                   className="hover:text-blue-500"
+                 >
+                  All Product
+                 </Link>
+
+       
+  <Link
+                   to="/dashboard/allUsers"
+                   className="hover:text-blue-500"
+                 >
+                  All Users
+                 </Link>
+
+
+        
+        
+      </div>
 
         {/* Action Icons */}
         <div className="flex items-center gap-6 text-xl relative">

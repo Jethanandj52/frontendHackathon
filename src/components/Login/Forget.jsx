@@ -1,32 +1,35 @@
 import react, { useState } from "react";
 import { Link,useNavigate } from 'react-router-dom';
-import {auth, sendPasswordResetEmail} from '../Firebase/Firebase-config.js'
+  import { toast } from "react-toastify";
+ import axios from "axios";
  
 
 
 const Forget = () => {
   
-  const [forgetEmail,setForgetEmail]=useState("")
+  const [email,setEmail]=useState("")
   const navigate=useNavigate()
 
- function forgetPassword(){
-  if(forgetEmail===""){
-    alert("Please Enter Email")
-  }else{
-    sendPasswordResetEmail(auth,forgetEmail)
-    .then(()=>{
-      alert("Reset Password Will Send On your Email")
+    const forgetPassword = async () => {
+    try {
+      const res = await axios.post(
+        " http://localhost:7000/auth/forget-password",
+        { email},
+        { withCredentials: true }
+      );
+
+      toast.success("Link will send on your email!", { autoClose: 1000 });
       setTimeout(() => {
-        navigate("/")
-      },100);
-    })
-    .catch((e)=>{
-      alert("Error "+e.massege)
-    })
-    
-    
-  }
- }
+         
+          navigate("/");
+        
+      }, 1000);
+    } catch (err) {
+      toast.error("Email Failed: " + (err.response?.data || err.message), {
+        autoClose: 2000,
+      });
+    }
+  };
   
 
   return (
@@ -39,7 +42,7 @@ const Forget = () => {
               type="email"
               placeholder="Enter your Email"
               className="p-1.5 w-full outline-none"
-              onChange={(e)=>setForgetEmail(e.target.value)}
+              onChange={(e)=>setEmail(e.target.value)}
             />
           </div>
            
